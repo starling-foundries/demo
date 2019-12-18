@@ -77,8 +77,8 @@ func testBlockchain() {
 		},
 		{
 			"default_operators",
-			"String",
-			"",
+			"List ByStr20",
+			"[]",
 		},
 	}
 	code, _ := ioutil.ReadFile("./FungibleToken.scilla")
