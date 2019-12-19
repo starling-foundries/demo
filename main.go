@@ -47,47 +47,20 @@ func testBlockchain() {
 	fmt.Println("The balance for account ", user.DefaultAccount.Address, " is: ", bal)
 	fmt.Println("The blockchain reports minimum gas price: ", gas)
 
-
-	init := []contract.Value{
-		{
-			"_scilla_version",
-			"Uint32",
-			"0",
-		},
-		{
-			"contractOwner",
-			"ByStr20",
-			"0x8254b2c9acdf181d5d6796d63320fbb20d4edd12",
-		},	
-				
-		{
-			"name",
-			"String",
-			"ERC777",
-		},
-		{
-			"symbol",
-			"String",
-			"MoonCOIN",
-		},
-		{
-			"decimals",
-			"Uint32",
-			"1",
-		},
-		{
-			"default_operators",
-			"List ByStr20",
-			"[]",
-		},
+	//Begin importing the contract and init parameters.
+	init, err := ioutil.ReadFile("./init.json")
+	if err != nil {
+		panic(err.Error())
 	}
+	var initArray []contract.Value
+	_ = json.Unmarshal(init, &initArray)
 	code, _ := ioutil.ReadFile("./FungibleToken.scilla")
 
 	fmt.Println("Attempting to deploy Fungible Token smart contract...")
 
 	hello := contract.Contract{
 		Code:     string(code),
-		Init:     init,
+		Init:     initArray,
 		Signer:   user,
 		Provider: zilliqa,
 	}
@@ -98,8 +71,8 @@ func testBlockchain() {
 	deployParams := contract.DeployParams{
 		Version:      strconv.FormatInt(int64(VERSION), 10),
 		Nonce:        strconv.FormatInt(nonce+1, 10),
-		GasPrice:     "10000000000",
-		GasLimit:     "1000000",
+		GasPrice:     "1000000000",
+		GasLimit:     "40000",
 		SenderPubKey: string(user.DefaultAccount.PublicKey),
 	}
 	deployTx, err := DeployWith(&hello, deployParams, "8254B2C9ACDF181D5D6796D63320FBB20D4EDD12")
@@ -156,6 +129,57 @@ func DeployWith(c *contract.Contract, params contract.DeployParams, pubkey strin
 
 }
 
+func addOperator() {
+	host := "https://dev-api.zilliqa.com/"
+	privateKey := "3375F915F3F9AE35E6B301B7670F53AD1A5BE15D8221EC7FD5E503F21D3450C8"
+	chainID := 333
+	msgVersion := 1
+
+	publickKey := keytools.GetPublicKeyFromPrivateKey(util.DecodeHex(privateKey), true)
+	address := keytools.GetAddressFromPublic(publickKey)
+	pubkey := util.EncodeHex(publickKey)
+	provider := provider.NewProvider(host)
+
+	wallet := account.NewWallet()
+	wallet.AddByPrivateKey(privateKey)
+
+	contract := contract.Contract{
+		Address:  "zil15e20r8mz6zwqxa7mvg2a72pazvdevcuguafxfp",
+		Signer:   wallet,
+		Provider: provider,
+	}
+
+	//Begin importing the contract and init parameters.
+	init, err := ioutil.ReadFile("./operatorAdd.json")
+	if err != nil {
+		panic(err.Error())
+	}
+	var args []contract.Value
+	_ = json.Unmarshal(init, &args)
+
+	nonce, _ := provider.GetBalance("9bfec715a6bd658fcb62b0f8cc9bfa2ade71434a").Result.(map[string]interface{})["nonce"].(json.Number).Int64()
+	n := nonce + 1
+	gasPrice := provider.GetMinimumGasPrice().Result.(string)
+
+	params := contract.CallParams{
+		Nonce:        strconv.FormatInt(n, 10),
+		Version:      strconv.FormatInt(int64(util.Pack(chainID, msgVersion)), 10),
+		GasPrice:     gasPrice,
+		GasLimit:     "1000",
+		SenderPubKey: pubkey,
+		Amount:       "0",
+	}
+
+	err, tx := contract.Call("Transfer", args, params, true, 1000, 3)
+	if err != nil {
+		fmt.Printf(err.Error())
+	}
+
+	tx.Confirm(tx.ID, 1000, 3, provider)
+
+}
+
 func main() {
-	testBlockchain()
+	//testBlockchain()
+	addOperator()
 }

@@ -1,5 +1,5 @@
-github.com/Zilliqa/gozilliqa-sdk v0.0.0-20191216084147-7575e5514255 h1:gvF+p3Kze07xVvbLFKzPRCZBGaHJ/+L1dMOhion7I7I=
-github.com/Zilliqa/gozilliqa-sdk v0.0.0-20191216084147-7575e5514255/go.mod h1:rpxnRO201gOnNJYx5K0N6lqZSKY+tXIi/sF5ru626r4=
+github.com/Zilliqa/gozilliqa-sdk v0.0.0-20191218092856-9756594bed6b h1:QiQXIBo6pGEpqCp9BAnslyrk0tfH0c56mMW1MVTStTQ=
+github.com/Zilliqa/gozilliqa-sdk v0.0.0-20191218092856-9756594bed6b/go.mod h1:rpxnRO201gOnNJYx5K0N6lqZSKY+tXIi/sF5ru626r4=
 github.com/aead/siphash v1.0.1/go.mod h1:Nywa3cDsYNNK3gaciGTWPwHt0wlpNV15vwmswBAUSII=
 github.com/btcsuite/btcd v0.0.0-20190315201642-aa6e0f35703c h1:5N/b57wo2KfeHCGGdcXtOPsHqkPD+veLZhK/bMg2anQ=
 github.com/btcsuite/btcd v0.0.0-20190315201642-aa6e0f35703c/go.mod h1:DrZx5ec/dmnfpw9KyYoQyYo7d0KEvTkk/5M/vbZjAr8=
